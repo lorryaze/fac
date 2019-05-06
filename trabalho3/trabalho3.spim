@@ -1,0 +1,74 @@
+.data
+	arr: .word 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229
+	inv: .asciiz "Entrada invalida."
+	newLine: .asciiz "\n"
+.text
+	main:
+	#lê um inteiro de entrada
+	li $v0, 5
+	syscall
+	
+	move $t0, $v0 #$t0 = valor da entrada
+	
+	#if $t0 <= 1 vai pra label
+	sle $t1, $t0, 1
+	bnez $t1, invalido
+	
+	#if $t0 >= 32768, vai pra label
+	sge $t1, $t0, 32768
+	bnez $t1, invalido
+	
+	li $t1, 0 # $t1 = 0, i = 0
+	li $t2, 0 # $t2 = 0, div
+	la $t3, arr #$t3 = arr[]
+	
+	#for(i = 0; i < 100; i++)
+	for: 
+		bgt $t1, 49 , exit #i < 50
+		lw $t4, ($t3) #$t4 = arr[i]
+		addi $t3, $t3, 4 #pula de posição
+		addi $t1, $t1, 1 #i++
+		j while
+	j for	
+	
+	exit:
+		li $v0, 10
+		syscall
+
+	#n % p == 0
+	while:
+		#se meu $t0 for <= 1 não entra no while
+		sle $t1, $t0, 1
+		beq $t1, 1, exit
+		
+		div $t0, $t4
+		mfhi $t5 #$t5 = resto da divisão
+		bnez $t5, for #se meu resto da divisão for diferente de 0
+		
+		#printar o valor arr[i]
+		li $v0, 1
+		move $a0, $t4
+		syscall
+		#printa \n
+		li $v0, 4
+		la $a0, newLine
+		syscall	
+		#atualiza o valor de $t0	
+		mflo $t0			
+	j while		
+	#return 0
+	li $v0, 10
+	syscall
+	
+	invalido:
+		#printa entrada inválida
+		li $v0, 4
+		la $a0, inv
+		syscall
+		#printa \n
+		li $v0, 4
+		la $a0, newLine
+		syscall
+		#finlaiza a label
+		li $v0, 10
+		syscall

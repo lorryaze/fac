@@ -11,12 +11,12 @@
 	move $t8, $v0 #$t8 = valor da entrada
 	
 	#if $t8 <= 1 vai pra label
-	#sle $t1, $t8, 1
-	#bnez $t1, invalido
+	sle $t1, $t8, 1
+	bnez $t1, invalido
 	
 	#if $t8 >= 32768, vai pra label
-	#sge $t1, $t8, 32768
-	#bnez $t1, invalido
+	sge $t1, $t8, 32768
+	bnez $t1, invalido
 	
 	li $t0, 0 #endereço de base do array
 	
